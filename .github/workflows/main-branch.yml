@@ -1,5 +1,4 @@
 name: 'Build process'
-run-name: ${{ github.actor }} is running build process
 
 on:
   workflow_dispatch:
@@ -10,8 +9,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - run: echo "The job is triggered by ${{ github.event_name }} event."
-    - run: echo "This job is running on a ${{ runner.os }} server."
     - run: echo "The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository}}."
     - name: Start time
       run: |
@@ -22,6 +19,11 @@ jobs:
       id: extract_branch
     - name: Print branch name
       run: echo ${{ steps.extract_branch.outputs.branch }}
+    - name: Extract branch name 2
+      run: echo "branch2=${GITHUB_REF#refs/heads/}" >> "$GITHUB_OUTPUT"
+      id: extract_branch2
+    - name: Print branch name 2
+      run: echo ${{ steps.extract_branch2.outputs.branch2 }}
     - name: Extract out the branch name from tag
       run: |
         echo ${{ steps.extract_branch.outputs.branch }} >> tmpInfo
