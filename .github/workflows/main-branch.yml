@@ -1,0 +1,57 @@
+name: 'Build process'
+run-name: ${{ github.actor }} is running build process
+
+on:
+  workflow_dispatch:
+  release:
+    types:
+    - created
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - run: echo "The job is triggered by ${{ github.event_name }} event."
+    - run: echo "This job is running on a ${{ runner.os }} server."
+    - run: echo "The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository}}."
+    - name: Start time
+      run: |
+        date
+    - name: Extract branch name
+      shell: bash
+      run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+      id: extract_branch
+    - name: Print branch name
+      run: echo ${{ steps.extract_branch.outputs.branch }}
+    - name: Extract out the branch name from tag
+      run: |
+        echo ${{ steps.extract_branch.outputs.branch }} >> tmpInfo
+        cat tmpInfo | sed -e "s/refs\/tags\///g" >> tmpInfo2
+        cat tmpInfo2
+        cat tmpInfo2 | sed -e "s/_.*//g" >> tmpInfo3
+        cat tmpInfo3
+        tag_name=`cat tmpInfo2`
+        branch_name=`cat tmpInfo3`
+        echo "branch_name=$branch_name" >> $GITHUB_ENV
+        echo "tag_name=$tag_name" >> $GITHUB_ENV
+    - name: Show the tag
+      run: |
+        echo $tag_name
+    - name: Show the extract branch
+      run: |
+        echo $branch_name
+    - name: Show github repository
+      run: |
+        echo ${GITHUB_REPOSITORY#*/}
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Java setup
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: 'gradle'
+    - name: Java build binaries
+      run: ./gradlew clean build -x test --no-daemon
+    - name: Completion time
+      run: |
+        date
