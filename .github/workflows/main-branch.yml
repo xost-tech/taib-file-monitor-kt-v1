@@ -27,6 +27,16 @@ jobs:
     - name: Show the extract branch
       run: |
         echo $branch_name
+    - name: Extract branch name 2
+      run: |
+        echo "branch_name2=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+        echo "tag_name2=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+    - name: Show the tag 2
+      run: |
+        echo $tag_name2
+    - name: Show the extract branch 2
+      run: |
+        echo $branch_name2
     - name: Show github repository
       run: |
         echo ${GITHUB_REPOSITORY#*/}
