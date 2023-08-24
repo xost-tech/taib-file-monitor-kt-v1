@@ -24,6 +24,8 @@ jobs:
       id: extract_branch2
     - name: Print branch name 2
       run: echo ${{ steps.extract_branch2.outputs.branch2 }}
+    - name: Print branch name 3
+      run: echo $branch2
     - name: Extract out the branch name from tag
       run: |
         echo ${{ steps.extract_branch.outputs.branch }} >> tmpInfo
